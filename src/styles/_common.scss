@@ -13,4 +13,11 @@
   cursor: pointer;
   text-align: start;
   outline: none;
+  font-family: "Inconsolata";
+}
+
+@mixin fontDefaults() {
+  font-family: "Inconsolata";
+  font-size: 16px;
+  font-weight: 600;
 }

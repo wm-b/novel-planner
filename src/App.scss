@@ -4,18 +4,31 @@ html,
 body,
 #root,
 main {
+  @include fontDefaults;
   margin: 0;
   width: 100%;
   height: 100%;
   color: white;
-  font-family: "Inconsolata";
-  font-size: 15px;
 }
 
 textarea {
+  @include fontDefaults;
   resize: none;
 }
 
 * {
   box-sizing: border-box;
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: gray;
+}
+
+::-webkit-scrollbar-thumb {
+  background: white;
+  border-radius: 4px;
 }

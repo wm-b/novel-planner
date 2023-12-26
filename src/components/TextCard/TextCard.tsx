@@ -1,21 +1,24 @@
-import { InputHTMLAttributes } from "react"
-import crosscircle from "assets/icons/crosscircle.svg"
+import { InputHTMLAttributes, useEffect, useRef } from "react"
+import insertBeforeIcon from "assets/icons/insert-before.svg"
+import insertAfterIcon from "assets/icons/insert-after.svg"
+import closeIcon from "assets/icons/close.svg"
 import s from "./TextCard.module.scss"
-import { useData } from "hooks/DataContext"
 
 export const TextCard = ({
   containerProps,
   titleProps,
   textProps,
+  insertBefore,
+  insertAfter,
   remove
 }: {
   containerProps?: InputHTMLAttributes<HTMLDivElement>
   titleProps?: InputHTMLAttributes<HTMLTextAreaElement>
   textProps?: InputHTMLAttributes<HTMLTextAreaElement>
+  insertBefore?: () => void
+  insertAfter?: () => void
   remove?: () => void
 }) => {
-  const { data } = useData()
-
   const { className: containerClassName, ...containerRest } =
     containerProps ?? { className: "" }
 
@@ -26,16 +29,54 @@ export const TextCard = ({
     >
       <div className={s.header}>
         <textarea {...titleProps} rows={1} />
-        {data.textcards.length > 1 && (
-          <button className={s.remove} onClick={remove}>
-            <img alt="remove card button" src={crosscircle} />
+
+        <div className={s.icons}>
+          <button onClick={insertBefore}>
+            <img alt="Insert Before Card" src={insertBeforeIcon} />
           </button>
-        )}
+
+          <button onClick={insertAfter}>
+            <img alt="Insert After Card" src={insertAfterIcon} />
+          </button>
+
+          <button onClick={remove}>
+            <img alt="Remove Card" src={closeIcon} />
+          </button>
+        </div>
       </div>
 
-      <div className={s.growWrap}>
-        <textarea {...textProps} data-replicated-value={textProps?.value} rows={5} />
-      </div>
+      <ExpandingTextArea {...textProps} rows={3} />
     </article>
+  )
+}
+
+export const ExpandingTextArea = ({
+  className,
+  rows,
+  ...rest
+}: { rows: number } & InputHTMLAttributes<HTMLTextAreaElement>) => {
+  const textAreaRef = useRef<HTMLTextAreaElement>(null)
+
+  const adjustHeight = () => {
+    if (!textAreaRef.current) return
+    textAreaRef.current.style.height = "initial"
+    textAreaRef.current.style.height = `${textAreaRef.current.scrollHeight}px`
+  }
+
+  useEffect(() => {
+    adjustHeight()
+  }, [rest.value])
+
+  useEffect(() => {
+    setTimeout(adjustHeight, 100)
+  }, [])
+
+  return (
+    <textarea
+      ref={textAreaRef}
+      rows={rows}
+      className={`${s.expandingTextArea} ${className}`}
+      {...rest}
+    />
   )
 }

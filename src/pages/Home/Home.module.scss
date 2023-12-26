@@ -1,11 +1,21 @@
+@import "../../styles/common";
+
 .container {
   display: flex;
   position: relative;
   flex-direction: column;
-  justify-content: center;
   align-items: center;
   width: 100%;
   height: 100%;
   gap: 20px;
   padding: 20px;
+  overflow-y: auto;
+
+  .addTextCard {
+    @include stripButton;
+    @include fontDefaults;
+    background-color: white;
+    padding: 5px;
+    border-radius: 5px;
+  }
 }

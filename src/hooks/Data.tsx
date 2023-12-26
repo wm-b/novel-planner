@@ -1,6 +1,6 @@
 import { DataContext } from "context/DataContext"
 import { useContext } from "react"
 
-export function useData() {
+export const useData = () => {
   return useContext(DataContext)
 }

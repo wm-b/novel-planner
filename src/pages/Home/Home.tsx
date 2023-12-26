@@ -1,8 +1,9 @@
 import { useData } from "hooks"
 import { TextCard } from "components"
 import { useRef, MouseEventHandler, useState } from "react"
-import s from "./Home.module.scss"
 import { Guid } from "utilities/data"
+import burger from "assets/icons/burger.svg"
+import s from "./Home.module.scss"
 
 export const Home = () => {
   const {
@@ -12,13 +13,17 @@ export const Home = () => {
     insertAfterTextCard,
     removeTextCard,
     updateTextCard,
-    moveTextCardByGuid
+    moveTextCardByGuid,
+    importData,
+    exportData
   } = useData()
 
   const [draggingData, setDraggingData] = useState<{
     id: Guid
     cursorOffset: number
   } | null>(null)
+
+  const [menuOpen, setMenuOpen] = useState(false)
 
   const draggingCopy = useRef<HTMLDivElement | null>(null)
 
@@ -49,6 +54,36 @@ export const Home = () => {
 
   return (
     <div className={s.container}>
+      <button className={s.burger} onClick={() => setMenuOpen(true)}>
+        <img alt="Menu" src={burger} />
+      </button>
+
+      <aside className={`${s.menu} ${menuOpen ? s.open : ""}`}>
+        <button
+          className={s.menuButton}
+          onClick={() => {
+            importData()
+            setMenuOpen(false)
+          }}
+        >
+          Import Data
+        </button>
+        <button
+          className={s.menuButton}
+          onClick={() => {
+            exportData()
+            setMenuOpen(false)
+          }}
+        >
+          Export Data
+        </button>
+      </aside>
+
+      <template
+        className={`${s.dim} ${menuOpen ? s.visible : ""}`}
+        onClick={() => setMenuOpen(false)}
+      />
+
       {data.textcards.map((tc) => (
         <TextCard
           key={tc.id}
@@ -99,7 +134,7 @@ export const Home = () => {
         />
       ))}
 
-      <button className={s.addTextCard} onClick={addTextCard}>
+      <button className={s.addNewCard} onClick={addTextCard}>
         Add New Card
       </button>
     </div>

@@ -17,9 +17,7 @@ export interface Connection {
   to: Guid
 }
 
-export interface Settings {
-  fontSize: number
-}
+export interface Settings {}
 
 export const initialData: Data = {
   textcards: [
@@ -30,7 +28,5 @@ export const initialData: Data = {
     }
   ],
   connections: [],
-  settings: {
-    fontSize: 16
-  }
+  settings: {}
 }

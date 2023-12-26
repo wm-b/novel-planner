@@ -27,8 +27,10 @@ export const TextCard = ({
       className={`${s.container} ${containerClassName}`}
       {...containerRest}
     >
+      <div className={s.top} />
+
       <div className={s.header}>
-        <textarea {...titleProps} rows={1} />
+        <textarea placeholder="Title" rows={1} {...titleProps} />
 
         <div className={s.icons}>
           <button onClick={insertBefore}>
@@ -45,7 +47,7 @@ export const TextCard = ({
         </div>
       </div>
 
-      <ExpandingTextArea {...textProps} rows={3} />
+      <ExpandingTextArea placeholder="Text" rows={3} {...textProps} />
     </article>
   )
 }

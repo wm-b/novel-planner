@@ -13,7 +13,14 @@ main {
 
 textarea {
   @include fontDefaults;
+  border: none;
   resize: none;
+  background-color: transparent;
+
+  &:focus {
+    outline: 2px solid #2277cc;
+    border-radius: 3px;
+  }
 }
 
 * {

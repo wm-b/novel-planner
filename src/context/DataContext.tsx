@@ -17,6 +17,8 @@ interface DataContextState {
   updateTextCard: (id: Guid, value: string, key?: keyof TextCard) => void
   moveTextCardByIndex: (moving: number, displacing: number) => void
   moveTextCardByGuid: (moving: Guid, replacing: Guid) => void
+  importData: () => void
+  exportData: () => void
 }
 
 export const DataContext = createContext<DataContextState>({
@@ -28,7 +30,9 @@ export const DataContext = createContext<DataContextState>({
   removeTextCard: () => {},
   updateTextCard: () => {},
   moveTextCardByIndex: () => {},
-  moveTextCardByGuid: () => {}
+  moveTextCardByGuid: () => {},
+  importData: () => {},
+  exportData: () => {}
 })
 
 export const DataProvider = ({ children }: { children: React.ReactNode }) => {
@@ -88,6 +92,34 @@ export const DataProvider = ({ children }: { children: React.ReactNode }) => {
     moveTextCardByIndex(movingIndex, displacingIndex)
   }
 
+  const importData = () => {
+    const fileInput = document.createElement("input")
+    fileInput.type = "file"
+    fileInput.accept = "application/json"
+    fileInput.onchange = () => {
+      if (!fileInput.files) return
+
+      const file = fileInput.files[0]
+      const reader = new FileReader()
+      reader.onload = () => {
+        if (!reader.result) return
+
+        const data = JSON.parse(reader.result.toString())
+        setData(data)
+      }
+      reader.readAsText(file)
+    }
+    fileInput.click()
+  }
+
+  const exportData = () => {
+    const file = new Blob([JSON.stringify(data)], { type: "application/json" })
+    const a = document.createElement("a")
+    a.href = URL.createObjectURL(file)
+    a.download = "novel-planner-data.json"
+    a.click()
+  }
+
   useEffect(() => {
     localStorage.setItem("data", JSON.stringify(data))
   }, [data])
@@ -105,7 +137,9 @@ export const DataProvider = ({ children }: { children: React.ReactNode }) => {
         removeTextCard,
         updateTextCard,
         moveTextCardByIndex,
-        moveTextCardByGuid
+        moveTextCardByGuid,
+        importData,
+        exportData
       }}
     >
       {children}

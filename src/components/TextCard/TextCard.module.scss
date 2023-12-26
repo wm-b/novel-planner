@@ -1,0 +1,53 @@
+@import "../../styles/common";
+
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  width: 100%;
+  max-width: 60em;
+  padding: 5px;
+  border-radius: 8px;
+  background-color: grey;
+  height: fit-content;
+
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    .remove {
+      @include stripButton();
+      width: 20px;
+      height: 20px;
+
+      > img {
+        width: 100%;
+        height: 100%;
+      }
+    }
+  }
+
+  .growWrap {
+    display: grid;
+    width: 100%;
+
+    &::after {
+      content: attr(data-replicated-value) " ";
+      white-space: pre-wrap;
+      visibility: hidden;
+      grid-area: 1 / 1 / 2 / 2;
+      padding: 10px 16px;
+    }
+
+    > textarea {
+      resize: none;
+      overflow: hidden;
+      grid-area: 1 / 1 / 2 / 2;
+    }
+  }
+
+  .addTextCard {
+    @include stripButton();
+  }
+}

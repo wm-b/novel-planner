@@ -23,8 +23,18 @@
     background: linear-gradient(90deg, #2277cc, #4499ee, #2277cc);
   }
 
+  &:focus-within {
+    > .header {
+      display: flex;
+
+      > .icons {
+        display: flex;
+      }
+    }
+  }
+
   .header {
-    display: flex;
+    display: none;
     justify-content: space-between;
     align-items: center;
 
@@ -35,6 +45,8 @@
     }
 
     .icons {
+      display: none;
+
       > button {
         @include stripButton;
 

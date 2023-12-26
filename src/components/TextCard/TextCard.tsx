@@ -29,7 +29,10 @@ export const TextCard = ({
     >
       <div className={s.top} />
 
-      <div className={s.header}>
+      <div
+        className={s.header}
+        style={{ display: titleProps?.value ? "flex" : undefined }}
+      >
         <textarea placeholder="Title" rows={1} {...titleProps} />
 
         <div className={s.icons}>

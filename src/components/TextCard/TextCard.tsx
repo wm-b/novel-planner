@@ -1,4 +1,6 @@
 import { InputHTMLAttributes, useEffect, useRef } from "react"
+import connectionIcon from "assets/icons/connection.svg"
+import connectionHighlightedIcon from "assets/icons/connection-highlighted.svg"
 import insertBeforeIcon from "assets/icons/insert-before.svg"
 import insertAfterIcon from "assets/icons/insert-after.svg"
 import closeIcon from "assets/icons/close.svg"
@@ -8,6 +10,8 @@ export const TextCard = ({
   containerProps,
   titleProps,
   textProps,
+  newConnection,
+  connectionIconHighlighted,
   insertBefore,
   insertAfter,
   remove
@@ -15,6 +19,8 @@ export const TextCard = ({
   containerProps?: InputHTMLAttributes<HTMLDivElement>
   titleProps?: InputHTMLAttributes<HTMLTextAreaElement>
   textProps?: InputHTMLAttributes<HTMLTextAreaElement>
+  newConnection?: () => void
+  connectionIconHighlighted?: boolean
   insertBefore?: () => void
   insertAfter?: () => void
   remove?: () => void
@@ -36,6 +42,13 @@ export const TextCard = ({
         <textarea placeholder="Title" rows={1} {...titleProps} />
 
         <div className={s.icons}>
+          <button onClick={newConnection}>
+            <img
+              alt="New Connection"
+              src={connectionIconHighlighted ? connectionHighlightedIcon : connectionIcon}
+            />
+          </button>
+
           <button onClick={insertBefore}>
             <img alt="Insert Before Card" src={insertBeforeIcon} />
           </button>

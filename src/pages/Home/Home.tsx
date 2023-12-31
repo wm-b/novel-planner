@@ -14,6 +14,7 @@ export const Home = () => {
     removeTextCard,
     updateTextCard,
     moveTextCardByGuid,
+    createNewConnection,
     importData,
     exportData
   } = useData()
@@ -24,6 +25,22 @@ export const Home = () => {
   } | null>(null)
 
   const [menuOpen, setMenuOpen] = useState(false)
+  const [newConnectionFrom, setNewConnectionFrom] = useState<Guid>()
+
+  const handleNewConnection = (id: Guid) => {
+    if (!newConnectionFrom) {
+      setNewConnectionFrom(id)
+      return
+    }
+
+    if (newConnectionFrom === id) {
+      setNewConnectionFrom(undefined)
+      return
+    }
+
+    createNewConnection(newConnectionFrom, id)
+    setNewConnectionFrom(undefined)
+  }
 
   const draggingCopy = useRef<HTMLDivElement | null>(null)
 
@@ -128,6 +145,8 @@ export const Home = () => {
             value: tc.text,
             onChange: (e) => updateTextCard(tc.id, e.target.value, "text")
           }}
+          newConnection={() => handleNewConnection(tc.id)}
+          connectionIconHighlighted={newConnectionFrom === tc.id}
           insertBefore={() => insertBeforeTextCard(tc.id)}
           insertAfter={() => insertAfterTextCard(tc.id)}
           remove={() => removeTextCard(tc.id)}

@@ -13,7 +13,7 @@
 
   .burger {
     @include stripButton;
-    position: absolute;
+    position: fixed;
     top: 10px;
     left: 10px;
     width: 30px;
@@ -32,7 +32,7 @@
     padding: 20px;
     gap: 10px;
     top: 0;
-    left: -300px;
+    left: -301px;
     width: 300px;
     height: 100%;
     background: linear-gradient(45deg, #eeeeee 0%, #cccccc 100%);

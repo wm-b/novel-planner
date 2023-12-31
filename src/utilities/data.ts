@@ -2,7 +2,8 @@ export type Guid = `${string}-${string}-${string}-${string}-${string}`
 
 export interface Data {
   textcards: TextCard[]
-  connections: Connection[]
+  leftConnections: Connection[]
+  rightConnections: Connection[]
   settings: Settings
 }
 
@@ -15,6 +16,7 @@ export interface TextCard {
 export interface Connection {
   from: Guid
   to: Guid
+  indentation: number
 }
 
 export interface Settings {}
@@ -27,6 +29,7 @@ export const initialData: Data = {
       text: ""
     }
   ],
-  connections: [],
+  leftConnections: [],
+  rightConnections: [],
   settings: {}
 }

@@ -5,7 +5,7 @@ import {
   useEffect,
   useState
 } from "react"
-import { Data, Guid, TextCard, initialData } from "utilities/data"
+import { Connection, Data, Guid, TextCard, initialData } from "utilities/data"
 
 interface DataContextState {
   data: Data
@@ -17,6 +17,7 @@ interface DataContextState {
   updateTextCard: (id: Guid, value: string, key?: keyof TextCard) => void
   moveTextCardByIndex: (moving: number, displacing: number) => void
   moveTextCardByGuid: (moving: Guid, replacing: Guid) => void
+  createNewConnection: (from: Guid, to: Guid) => void
   importData: () => void
   exportData: () => void
 }
@@ -31,6 +32,7 @@ export const DataContext = createContext<DataContextState>({
   updateTextCard: () => {},
   moveTextCardByIndex: () => {},
   moveTextCardByGuid: () => {},
+  createNewConnection: () => {},
   importData: () => {},
   exportData: () => {}
 })
@@ -92,6 +94,91 @@ export const DataProvider = ({ children }: { children: React.ReactNode }) => {
     moveTextCardByIndex(movingIndex, displacingIndex)
   }
 
+  const createNewConnection = (from: Guid, to: Guid) => {
+    if (
+      [...data.leftConnections, ...data.rightConnections].find(
+        (c) => c.from === from && c.to === to
+      )
+    )
+      return
+
+    const getIndex = (id: Guid) =>
+      data.textcards.findIndex((tc) => tc.id === id)
+
+    let connections: Connection[]
+    let setConnections: (fn: (prev: Connection[]) => Connection[]) => void
+
+    if (getIndex(from) - getIndex(to) < 0) {
+      connections = data.leftConnections
+      setConnections = (fn: (prev: Connection[]) => Connection[]) =>
+        setData((prev) => ({
+          ...prev,
+          leftConnections: fn(prev.leftConnections)
+        }))
+    } else {
+      connections = data.rightConnections
+      setConnections = (fn: (prev: Connection[]) => Connection[]) =>
+        setData((prev) => ({
+          ...prev,
+          rightConnections: fn(prev.rightConnections)
+        }))
+    }
+
+    // if the new connection's "to" is inside an existing connection and its "from" is inside
+    // another different existing connection, return
+    if (
+      connections.find((c) => getIndex(c.from) < getIndex(from)) &&
+      connections.find((c) => getIndex(c.to) > getIndex(to))
+    )
+      return
+
+    // get any connections that completely contain the new connection
+    const getContainingConnections = (from: Guid, to: Guid) => {
+      const fromIndex = getIndex(from)
+      const toIndex = getIndex(to)
+
+      return connections.filter(
+        (c) =>
+          getIndex(c.from) < fromIndex &&
+          getIndex(c.to) > toIndex &&
+          c.from !== from &&
+          c.to !== to
+      )
+    }
+
+    // get any connections that are completely contained by the new connection
+    const getContainedConnections = (from: Guid, to: Guid) => {
+      const fromIndex = getIndex(from)
+      const toIndex = getIndex(to)
+
+      return connections.filter(
+        (c) =>
+          getIndex(c.from) > fromIndex &&
+          getIndex(c.to) < toIndex &&
+          c.from !== from &&
+          c.to !== to
+      )
+    }
+
+    // compute the indentation of the new connection based on the number of connections it contains
+    // and increase the indentation of any connections that completely contain the new connection
+    const containingConnections = getContainingConnections(from, to)
+    const containedConnections = getContainedConnections(from, to)
+    const indentation =
+      containedConnections.sort((a, b) => b.indentation - a.indentation)[0]
+        ?.indentation + 1 || 0
+
+    setConnections((prev) =>
+      prev
+        .map((c) =>
+          containingConnections.includes(c)
+            ? { ...c, indentation: c.indentation + 1 }
+            : c
+        )
+        .concat({ from, to, indentation })
+    )
+  }
+
   const importData = () => {
     const fileInput = document.createElement("input")
     fileInput.type = "file"
@@ -138,6 +225,7 @@ export const DataProvider = ({ children }: { children: React.ReactNode }) => {
         updateTextCard,
         moveTextCardByIndex,
         moveTextCardByGuid,
+        createNewConnection,
         importData,
         exportData
       }}

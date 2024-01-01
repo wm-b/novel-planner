@@ -10,14 +10,14 @@ import { Connection, Data, Guid, TextCard, initialData } from "utilities/data"
 interface DataContextState {
   data: Data
   setData: Dispatch<SetStateAction<Data>>
-  addTextCard: () => void
+  createTextCard: () => void
   insertBeforeTextCard: (id: Guid) => void
   insertAfterTextCard: (id: Guid) => void
   removeTextCard: (id: Guid) => void
   updateTextCard: (id: Guid, value: string, key?: keyof TextCard) => void
   moveTextCardByIndex: (moving: number, displacing: number) => void
   moveTextCardByGuid: (moving: Guid, replacing: Guid) => void
-  createNewConnection: (from: Guid, to: Guid) => void
+  createConnection: (from: Guid, to: Guid) => void
   importData: () => void
   exportData: () => void
 }
@@ -25,14 +25,14 @@ interface DataContextState {
 export const DataContext = createContext<DataContextState>({
   data: initialData,
   setData: () => {},
-  addTextCard: () => {},
+  createTextCard: () => {},
   insertBeforeTextCard: () => {},
   insertAfterTextCard: () => {},
   removeTextCard: () => {},
   updateTextCard: () => {},
   moveTextCardByIndex: () => {},
   moveTextCardByGuid: () => {},
-  createNewConnection: () => {},
+  createConnection: () => {},
   importData: () => {},
   exportData: () => {}
 })
@@ -47,7 +47,7 @@ export const DataProvider = ({ children }: { children: React.ReactNode }) => {
   const setTextCards = (fn: (prev: TextCard[]) => TextCard[]) =>
     setData((prev) => ({ ...prev, textcards: fn(prev.textcards) }))
 
-  const addTextCard = () =>
+  const createTextCard = () =>
     setTextCards((prev) => [
       ...prev,
       { id: crypto.randomUUID(), title: "", text: "" }
@@ -94,7 +94,7 @@ export const DataProvider = ({ children }: { children: React.ReactNode }) => {
     moveTextCardByIndex(movingIndex, displacingIndex)
   }
 
-  const createNewConnection = (from: Guid, to: Guid) => {
+  const createConnection = (from: Guid, to: Guid) => {
     if (
       [...data.leftConnections, ...data.rightConnections].find(
         (c) => c.from === from && c.to === to
@@ -218,14 +218,14 @@ export const DataProvider = ({ children }: { children: React.ReactNode }) => {
       value={{
         data,
         setData,
-        addTextCard,
+        createTextCard,
         insertBeforeTextCard,
         insertAfterTextCard,
         removeTextCard,
         updateTextCard,
         moveTextCardByIndex,
         moveTextCardByGuid,
-        createNewConnection,
+        createConnection,
         importData,
         exportData
       }}

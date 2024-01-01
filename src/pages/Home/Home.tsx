@@ -8,13 +8,13 @@ import s from "./Home.module.scss"
 export const Home = () => {
   const {
     data,
-    addTextCard,
+    createTextCard,
     insertBeforeTextCard,
     insertAfterTextCard,
     removeTextCard,
     updateTextCard,
     moveTextCardByGuid,
-    createNewConnection,
+    createConnection,
     importData,
     exportData
   } = useData()
@@ -38,7 +38,7 @@ export const Home = () => {
       return
     }
 
-    createNewConnection(newConnectionFrom, id)
+    createConnection(newConnectionFrom, id)
     setNewConnectionFrom(undefined)
   }
 
@@ -104,39 +104,38 @@ export const Home = () => {
       {data.textcards.map((tc) => (
         <TextCard
           key={tc.id}
-          containerProps={{
-            onDragStart: (e) => {
-              e.currentTarget.style.opacity = "0"
-              setDraggingData({
-                id: tc.id,
-                cursorOffset:
-                  e.clientY - e.currentTarget.getBoundingClientRect().top
-              })
-              createCopyUnderCursor(e)
-            },
-            onDrag: (e) => {
-              moveCopyWithCursor(e.clientX, e.clientY)
-            },
-            onDragEnd: (e) => {
-              removeCopyUnderCursor()
-              setDraggingData(null)
-              e.currentTarget.style.opacity = "unset"
-            },
-            onDragOver: (e) => {
-              if (
-                !draggingData ||
-                !draggingCopy.current ||
-                e.clientY <
-                  e.currentTarget.getBoundingClientRect().bottom -
-                    (draggingCopy.current.getBoundingClientRect().height + 20)
-              )
-                return
-
-              moveTextCardByGuid(draggingData.id, tc.id)
-              e.preventDefault()
-            },
-            draggable: true
+          id={tc.id}
+          onDragStart={(e) => {
+            e.currentTarget.style.opacity = "0"
+            setDraggingData({
+              id: tc.id,
+              cursorOffset:
+                e.clientY - e.currentTarget.getBoundingClientRect().top
+            })
+            createCopyUnderCursor(e)
           }}
+          onDrag={(e) => {
+            moveCopyWithCursor(e.clientX, e.clientY)
+          }}
+          onDragEnd={(e) => {
+            removeCopyUnderCursor()
+            setDraggingData(null)
+            e.currentTarget.style.opacity = "unset"
+          }}
+          onDragOver={(e) => {
+            if (
+              !draggingData ||
+              !draggingCopy.current ||
+              e.clientY <
+                e.currentTarget.getBoundingClientRect().bottom -
+                  (draggingCopy.current.getBoundingClientRect().height + 20)
+            )
+              return
+
+            moveTextCardByGuid(draggingData.id, tc.id)
+            e.preventDefault()
+          }}
+          draggable={true}
           titleProps={{
             value: tc.title,
             onChange: (e) => updateTextCard(tc.id, e.target.value, "title")
@@ -153,8 +152,8 @@ export const Home = () => {
         />
       ))}
 
-      <button className={s.addNewCard} onClick={addTextCard}>
-        Add New Card
+      <button className={s.newCardButton} onClick={createTextCard}>
+        Create New Card
       </button>
     </div>
   )

@@ -7,16 +7,17 @@ import closeIcon from "assets/icons/close.svg"
 import s from "./TextCard.module.scss"
 
 export const TextCard = ({
-  containerProps,
+  id,
   titleProps,
   textProps,
   newConnection,
   connectionIconHighlighted,
   insertBefore,
   insertAfter,
-  remove
+  remove,
+  ...containerProps
 }: {
-  containerProps?: InputHTMLAttributes<HTMLDivElement>
+  id: string
   titleProps?: InputHTMLAttributes<HTMLTextAreaElement>
   textProps?: InputHTMLAttributes<HTMLTextAreaElement>
   newConnection?: () => void
@@ -24,9 +25,12 @@ export const TextCard = ({
   insertBefore?: () => void
   insertAfter?: () => void
   remove?: () => void
-}) => {
+} & InputHTMLAttributes<HTMLDivElement>) => {
   const { className: containerClassName, ...containerRest } =
     containerProps ?? { className: "" }
+  const { onKeyDown: onTitleKeyDown, ...titlePropsRest } = titleProps ?? {
+    onTitleKeyDown: undefined
+  }
 
   return (
     <article
@@ -39,13 +43,26 @@ export const TextCard = ({
         className={s.header}
         style={{ display: titleProps?.value ? "flex" : undefined }}
       >
-        <textarea placeholder="Title" rows={1} {...titleProps} />
+        <textarea
+          id={`${id}-title`}
+          placeholder="Title"
+          rows={1}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") e.preventDefault()
+            onTitleKeyDown?.(e)
+          }}
+          {...titlePropsRest}
+        />
 
         <div className={s.icons}>
           <button onClick={newConnection}>
             <img
               alt="New Connection"
-              src={connectionIconHighlighted ? connectionHighlightedIcon : connectionIcon}
+              src={
+                connectionIconHighlighted
+                  ? connectionHighlightedIcon
+                  : connectionIcon
+              }
             />
           </button>
 
@@ -63,7 +80,12 @@ export const TextCard = ({
         </div>
       </div>
 
-      <ExpandingTextArea placeholder="Text" rows={3} {...textProps} />
+      <ExpandingTextArea
+        id={`${id}-text`}
+        placeholder="Text"
+        rows={3}
+        {...textProps}
+      />
     </article>
   )
 }

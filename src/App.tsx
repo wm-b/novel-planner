@@ -1,7 +1,7 @@
 import "./App.scss"
 import { DefaultLayout } from "layouts"
 import { Home } from "pages"
-import { DataProvider } from "context"
+import { DataProvider } from "contexts"
 
 const CurrentPage = () => {
   switch (true) {

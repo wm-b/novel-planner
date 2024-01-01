@@ -26,15 +26,15 @@ export const TextCard = ({
   insertAfter?: () => void
   remove?: () => void
 } & InputHTMLAttributes<HTMLDivElement>) => {
-  const { className: containerClassName, ...containerRest } =
-    containerProps ?? { className: "" }
+  const { className, draggable, ...containerRest } = containerProps
   const { onKeyDown: onTitleKeyDown, ...titlePropsRest } = titleProps ?? {
     onTitleKeyDown: undefined
   }
 
   return (
     <article
-      className={`${s.container} ${containerClassName}`}
+      className={`${s.container} ${draggable ? s.draggable : ""} ${className}`}
+      draggable={draggable}
       {...containerRest}
     >
       <div className={s.top} />

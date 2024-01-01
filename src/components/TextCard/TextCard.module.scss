@@ -13,7 +13,10 @@
   border-radius: 8px;
   background: linear-gradient(135deg, #eeeeee 0%, #dddddd 100%);
   height: fit-content;
-  cursor: grab;
+  
+  &.draggable {
+    cursor: grab;
+  }
 
   .top {
     position: absolute;
@@ -48,13 +51,9 @@
     .icons {
       display: none;
 
-      > button {
-        @include stripButton;
-
-        > img {
-          width: 100%;
-          height: 100%;
-        }
+      > button > img {
+        width: 100%;
+        height: 100%;
       }
 
       > button,

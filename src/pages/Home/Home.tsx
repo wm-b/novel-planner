@@ -1,5 +1,5 @@
 import { useData } from "hooks"
-import { TextCard } from "components"
+import { Menu, Search, TextCard } from "components"
 import { useRef, MouseEventHandler, useState } from "react"
 import { Guid } from "utilities/data"
 import burger from "assets/icons/burger.svg"
@@ -26,6 +26,8 @@ export const Home = () => {
 
   const [menuOpen, setMenuOpen] = useState(false)
   const [newConnectionFrom, setNewConnectionFrom] = useState<Guid>()
+
+  const [filter, setFilter] = useState("")
 
   const handleNewConnection = (id: Guid) => {
     if (!newConnectionFrom) {
@@ -75,86 +77,79 @@ export const Home = () => {
         <img alt="Menu" src={burger} />
       </button>
 
-      <aside className={`${s.menu} ${menuOpen ? s.open : ""}`}>
-        <button
-          className={s.menuButton}
-          onClick={() => {
-            importData()
-            setMenuOpen(false)
-          }}
-        >
-          Import Data
-        </button>
-        <button
-          className={s.menuButton}
-          onClick={() => {
-            exportData()
-            setMenuOpen(false)
-          }}
-        >
-          Export Data
-        </button>
-      </aside>
-
-      <template
-        className={`${s.dim} ${menuOpen ? s.visible : ""}`}
-        onClick={() => setMenuOpen(false)}
+      <Menu
+        open={menuOpen}
+        setOpen={setMenuOpen}
+        buttons={[
+          { text: "Import Data", onClick: importData },
+          { text: "Export Data", onClick: exportData }
+        ]}
       />
 
-      {data.textcards.map((tc) => (
-        <TextCard
-          key={tc.id}
-          id={tc.id}
-          onDragStart={(e) => {
-            e.currentTarget.style.opacity = "0"
-            setDraggingData({
-              id: tc.id,
-              cursorOffset:
-                e.clientY - e.currentTarget.getBoundingClientRect().top
-            })
-            createCopyUnderCursor(e)
-          }}
-          onDrag={(e) => {
-            moveCopyWithCursor(e.clientX, e.clientY)
-          }}
-          onDragEnd={(e) => {
-            removeCopyUnderCursor()
-            setDraggingData(null)
-            e.currentTarget.style.opacity = "unset"
-          }}
-          onDragOver={(e) => {
-            if (
-              !draggingData ||
-              !draggingCopy.current ||
-              e.clientY <
-                e.currentTarget.getBoundingClientRect().bottom -
-                  (draggingCopy.current.getBoundingClientRect().height + 20)
-            )
-              return
+      <Search filter={filter} setFilter={setFilter} />
 
-            moveTextCardByGuid(draggingData.id, tc.id)
-            e.preventDefault()
-          }}
-          draggable={true}
-          titleProps={{
-            value: tc.title,
-            onChange: (e) => updateTextCard(tc.id, e.target.value, "title")
-          }}
-          textProps={{
-            value: tc.text,
-            onChange: (e) => updateTextCard(tc.id, e.target.value, "text")
-          }}
-          newConnection={() => handleNewConnection(tc.id)}
-          connectionIconHighlighted={newConnectionFrom === tc.id}
-          insertBefore={() => insertBeforeTextCard(tc.id)}
-          insertAfter={() => insertAfterTextCard(tc.id)}
-          remove={() => removeTextCard(tc.id)}
-        />
-      ))}
+      {data.textcards
+        .filter(
+          (tc) =>
+            tc.title.toLowerCase().includes(filter.toLowerCase()) ||
+            tc.text.toLowerCase().includes(filter.toLowerCase())
+        )
+        .map((tc) => (
+          <TextCard
+            key={tc.id}
+            id={tc.id}
+            onDragStart={(e) => {
+              e.currentTarget.style.opacity = "0"
+              setDraggingData({
+                id: tc.id,
+                cursorOffset:
+                  e.clientY - e.currentTarget.getBoundingClientRect().top
+              })
+              createCopyUnderCursor(e)
+            }}
+            onDrag={(e) => {
+              moveCopyWithCursor(e.clientX, e.clientY)
+            }}
+            onDragEnd={(e) => {
+              removeCopyUnderCursor()
+              setDraggingData(null)
+              e.currentTarget.style.opacity = "unset"
+            }}
+            onDragOver={(e) => {
+              if (
+                !draggingData ||
+                !draggingCopy.current ||
+                e.clientY <
+                  e.currentTarget.getBoundingClientRect().bottom -
+                    (draggingCopy.current.getBoundingClientRect().height + 20)
+              )
+                return
 
-      <button className={s.newCardButton} onClick={createTextCard}>
-        Create New Card
-      </button>
+              moveTextCardByGuid(draggingData.id, tc.id)
+              e.preventDefault()
+            }}
+            draggable={!filter}
+            titleProps={{
+              value: tc.title,
+              onChange: (e) => updateTextCard(tc.id, e.target.value, "title")
+            }}
+            textProps={{
+              value: tc.text,
+              onChange: (e) => updateTextCard(tc.id, e.target.value, "text")
+            }}
+            newConnection={() => handleNewConnection(tc.id)}
+            connectionIconHighlighted={newConnectionFrom === tc.id}
+            insertBefore={() => insertBeforeTextCard(tc.id)}
+            insertAfter={() => insertAfterTextCard(tc.id)}
+            remove={() => removeTextCard(tc.id)}
+          />
+        ))}
+
+      {!data.textcards.length && (
+        <button className={s.newCardButton} onClick={createTextCard}>
+          Create New Card
+        </button>
+      )}
     </div>
   )
 }

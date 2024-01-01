@@ -1,0 +1,35 @@
+@import '../../styles/common';
+
+.container {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px;
+  border-radius: 5px;
+  border: 1px solid transparent;
+  background-color: #1b2735;
+  width: 100%;
+  max-width: 40em;
+  transition: border 0.2s ease-in-out;
+
+  &:focus-within {
+    border: 1px solid #2277cc;
+  }
+
+  > img {
+    width: 25px;
+    height: 25px;
+    object-fit: contain;
+  }
+
+  > input {
+    @include fontDefaults;
+    width: 100%;
+    background: none;
+    border: none;
+    color: white;
+    font-size: 20px;
+    font-weight: 400;
+    outline: none;
+  }
+}

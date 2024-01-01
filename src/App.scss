@@ -23,6 +23,26 @@ textarea {
   }
 }
 
+button {
+  width: fit-content;
+  height: fit-content;
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  cursor: pointer;
+  text-align: start;
+  outline: none;
+  font-family: "Inconsolata";
+  outline: 1px solid transparent;
+  border-radius: 3px;
+  transition: outline 0.1s ease-in-out;
+
+  &:focus-visible {
+    outline: 1px solid #2277cc;
+  }
+}
+
 * {
   box-sizing: border-box;
 }
